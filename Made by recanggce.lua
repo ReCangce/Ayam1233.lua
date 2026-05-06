@@ -574,7 +574,119 @@ Rayfield:Notify({
 end)
 
 createTab("NPC or Die", function()
-    loadstring(game:HttpGet('https://pastebin.com/NNqwKvPX'))()
+    --[[
+    WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
+]]
+--CONFIG
+local TOGGLE_KEY = Enum.KeyCode.K 
+local SHOW_NAME = true 
+local OUTLINE_COLOR = Color3.fromRGB(0, 255, 127) 
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local TAG_NAME = "RealPlayerESP_V2"
+local enabled = true 
+
+--ESP
+local function createESP(model, name)
+    if not model:FindFirstChild(TAG_NAME) then
+        local folder = Instance.new("Folder")
+        folder.Name = TAG_NAME
+        folder.Parent = model
+
+        local hl = Instance.new("Highlight")
+        hl.Name = "Outline"
+        hl.FillTransparency = 1 
+        hl.OutlineColor = OUTLINE_COLOR
+        hl.OutlineTransparency = 0
+        hl.Parent = folder
+
+        if SHOW_NAME then
+            local bgui = Instance.new("BillboardGui")
+            bgui.Name = "NameTag"
+            bgui.Adornee = model:FindFirstChild("Head")
+            bgui.Size = UDim2.new(0, 100, 0, 50)
+            bgui.StudsOffset = Vector3.new(0, 3, 0)
+            bgui.AlwaysOnTop = true
+            
+            local tl = Instance.new("TextLabel")
+            tl.BackgroundTransparency = 1
+            tl.Size = UDim2.new(1, 0, 1, 0)
+            tl.Text = "[REAL] " .. name
+            tl.TextColor3 = OUTLINE_COLOR
+            tl.TextStrokeTransparency = 0
+            tl.TextScaled = true
+            tl.Font = Enum.Font.SourceSansBold
+            tl.Parent = bgui
+            bgui.Parent = folder
+        end
+    end
+end
+
+local function clearAllESP()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player.Character then
+            local tag = player.Character:FindFirstChild(TAG_NAME)
+            if tag then tag:Destroy() end
+        end
+    end
+end
+
+local staminaHooked = false
+local function activateInfStamina()
+    local found = false
+    for _, v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v, "StaminaPercentage") and rawget(v, "RegenRate") then
+            task.spawn(function()
+                while v and v.StaminaPercentage do
+                    v.StaminaPercentage = 100
+                    task.wait(0.1)
+                end
+                staminaHooked = false 
+            end)
+
+            if v.AttemptChunkBurn then
+                v.AttemptChunkBurn = function() return true end
+            end
+            v.Usable = false 
+            found = true
+            staminaHooked = true
+            print("Infinite Stamina: Hooked Successfully!")
+            break
+        end
+    end
+    return found
+end
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == TOGGLE_KEY then
+        enabled = not enabled
+        if not enabled then
+            clearAllESP()
+            print("ESP Disabled")
+        else
+            print("ESP Enabled")
+        end
+    end
+end)
+
+task.spawn(function()
+    while true do
+        if enabled then
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer and player.Character and player.Character:IsDescendantOf(workspace) then
+                    createESP(player.Character, player.Name)
+                end
+            end
+        end
+        
+        if not staminaHooked then
+            activateInfStamina()
+        end
+        task.wait(2) 
+    end
+end)
 end)
 
 createTab("Survive Apocalypse", function()

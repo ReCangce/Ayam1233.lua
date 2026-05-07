@@ -86,7 +86,7 @@ addCorner(Border)
 local Title = Instance.new("TextLabel", MainFrame)
 Title.Size = UDim2.new(1, 0, 0, 30)
 Title.BackgroundColor3 = GrayBg
-Title.Text = "NEO EXECUTOR"
+Title.Text = "EWL EXECUTOR"
 Title.TextColor3 = NeonGreen
 Title.Font = Enum.Font.GothamBold
 addCorner(Title)

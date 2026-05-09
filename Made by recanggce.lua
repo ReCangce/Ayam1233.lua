@@ -16,7 +16,7 @@ ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 
 -- Variabel Key
-local correctKey = "EdwardLi99"
+local correctKey = "LijayaSigma77"
 
 -- Helper: Bikin Sudut Bulat
 local function addCorner(parent, radius)
@@ -696,4 +696,8 @@ end)
 
 createTab("Brookhaven", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/kigredns/testUIDK/refs/heads/main/panel.lua"))()
+end)
+
+createTab("Youtube Music", function()
+    loadstring(game:HttpGet(('https://raw.githubusercontent.com/Dan41/Roblox-Scripts/refs/heads/main/Youtube%20Music%20Player/YoutubeMusicPlayer.lua'),true))()
 end)

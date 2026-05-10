@@ -158,8 +158,7 @@ createTab("Infinite Yield", function()
 end)
 
 createTab("99 Night", function()
-        
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest.lua", true))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/FoxnameHub.lua"))()
 end)
 
 createTab("Bake or Die", function()

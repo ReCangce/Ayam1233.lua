@@ -1,0 +1,107 @@
+-- Neo Auto-Keypad Bake or Die (With STOP Button)
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local KeyInput = Instance.new("TextBox")
+local StartBtn = Instance.new("TextButton")
+local StopBtn = Instance.new("TextButton")
+local StatusLabel = Instance.new("TextLabel")
+
+-- Setup UI
+ScreenGui.Name = "AutoKeypadEWL"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(130, 0, 0) -- Merah Gelap
+MainFrame.Position = UDim2.new(0.5, -110, 0.4, 0)
+MainFrame.Size = UDim2.new(0, 220, 0, 180)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local function styleBtn(btn, color)
+    local corner = Instance.new("UICorner", btn)
+    btn.BackgroundColor3 = color
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+end
+
+local MainCorner = Instance.new("UICorner", MainFrame)
+
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "AUTO KEYPAD BANK"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+
+KeyInput.Parent = MainFrame
+KeyInput.Position = UDim2.new(0.1, 0, 0.25, 0)
+KeyInput.Size = UDim2.new(0.8, 0, 0, 35)
+KeyInput.PlaceholderText = "Masukkan Kode..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 0, 0)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", KeyInput)
+
+StartBtn.Parent = MainFrame
+StartBtn.Position = UDim2.new(0.1, 0, 0.5, 0)
+StartBtn.Size = UDim2.new(0.8, 0, 0, 30)
+StartBtn.Text = "RUNNING / START"
+styleBtn(StartBtn, Color3.fromRGB(200, 0, 0))
+
+StopBtn.Parent = MainFrame
+StopBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
+StopBtn.Size = UDim2.new(0.8, 0, 0, 30)
+StopBtn.Text = "STOP / DISABLE"
+styleBtn(StopBtn, Color3.fromRGB(40, 40, 40))
+
+StatusLabel.Parent = MainFrame
+StatusLabel.Position = UDim2.new(0, 0, 0.9, 0)
+StatusLabel.Size = UDim2.new(1, 0, 0, 20)
+StatusLabel.Text = "Status: Idle"
+StatusLabel.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.TextSize = 12
+
+-- LOGIC
+local isRunning = false
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ZAP = require(ReplicatedStorage:WaitForChild("Client"):WaitForChild("ClientRemotes"))
+
+StartBtn.MouseButton1Click:Connect(function()
+    isRunning = true
+    StatusLabel.Text = "Status: Aktif (Mencari Keypad...)"
+    StartBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+    StopBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+end)
+
+StopBtn.MouseButton1Click:Connect(function()
+    isRunning = false
+    StatusLabel.Text = "Status: Berhenti (Mati)"
+    StartBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    StopBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+        if isRunning and KeyInput.Text ~= "" then
+            local pGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+            local keypad = pGui:FindFirstChild("Keypad") or pGui:FindFirstChild("BankKeypad")
+            
+            if keypad and (keypad:IsA("ScreenGui") and keypad.Enabled == true) then
+                StatusLabel.Text = "Status: Keypad Terdeteksi!"
+                pcall(function()
+                    ZAP.enterCode.fire({
+                        code = KeyInput.Text
+                    })
+                end)
+                task.wait(2)
+                StatusLabel.Text = "Status: Kode Terkirim!"
+            end
+        end
+    end
+end)

@@ -16,7 +16,7 @@ ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 
 -- Variabel Key
-local correctKey = "ImaGongShi"
+local correctKey = "LoL"
 
 -- Helper: Bikin Sudut Bulat
 local function addCorner(parent, radius)
